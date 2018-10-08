@@ -19,9 +19,8 @@ public:
 
 private:
     Ui::Timer *ui;
-    QTimer *timer;
-    QTime time;
-    int timeout;
+    QTimer *timer; //counting time passing
+    QTime time; //displaying the time
     bool running;
 
 private slots:
