@@ -20,7 +20,7 @@ public:
     ~Timer();
 
 signals:
-    void timerStart();
+    void timerStart(bool firstRun);
     void timerStop();
 
 private:

@@ -62,7 +62,7 @@ void Timer::update()
         this->ui->pushButton->setText("Start");
         return;
     }
-    rest -= 100; //100 milliseconds past
+    rest -= INTERLEAVE; //100 milliseconds past
     this->time = QTime::fromMSecsSinceStartOfDay(rest);
     this->ui->label->setText(this->time.toString("mm:ss:z"));
 }
