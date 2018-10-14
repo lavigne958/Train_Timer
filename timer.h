@@ -2,8 +2,10 @@
 #define TIMER_H
 
 #include <QMainWindow>
-#include <QTimer>
+#include <QThread>
 #include <QTime>
+
+#include "timerthread.h"
 
 namespace Ui {
 class Timer;
@@ -17,10 +19,15 @@ public:
     explicit Timer(QWidget *parent = nullptr);
     ~Timer();
 
+signals:
+    void timerStart();
+    void timerStop();
+
 private:
     Ui::Timer *ui;
-    QTimer *timer; //counting time passing
     QTime time; //displaying the time
+    TimerThread *timer;
+    QThread *workerThread;
     bool running;
 
 private slots:

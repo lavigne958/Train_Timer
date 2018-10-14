@@ -24,10 +24,12 @@ CONFIG += c++11 console
 
 SOURCES += \
         main.cpp \
-        timer.cpp
+        timer.cpp \
+    timerthread.cpp
 
 HEADERS += \
-        timer.h
+        timer.h \
+    timerthread.h
 
 FORMS += \
         timer.ui
