@@ -40,6 +40,7 @@ void Timer::startTimer()
         int minutes = ui->spinBox->value();
         emit timerStart(true, minutes);
         this->ui->pushButton->setText("Stop");
+        this->ui->spinBox->setEnabled(false);
         this->running = true;
         this->finished = false;
     } else {
@@ -73,9 +74,21 @@ void Timer::resetTimer()
     this->finished = true;
     this->ui->pushButton->setText("Start");
     this->ui->label->setText(STR_ZERO_TIME);
+    this->ui->spinBox->setEnabled(true);
 }
 
 void Timer::on_pushButton_2_clicked()
 {
     this->resetTimer();
+}
+
+void Timer::on_spinBox_valueChanged(int minutes)
+{
+    if (!this->running && this->finished) {
+        QString strTime;
+        strTime.append((minutes < 10)?"0":"");
+        strTime.append(QString::number(minutes));
+        strTime.append(":00:00");
+        this->ui->label->setText(strTime);
+    }
 }

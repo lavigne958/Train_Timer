@@ -38,6 +38,7 @@ private slots:
     void update(QString);
     void startTimer();
     void on_pushButton_2_clicked();
+    void on_spinBox_valueChanged(int arg1);
 };
 
 #endif // TIMER_H
