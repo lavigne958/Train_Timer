@@ -8,18 +8,24 @@ Timer::Timer(QWidget *parent) :
     ui(new Ui::Timer)
 {
     ui->setupUi(this);
-    this->time = QTime(0, 0, 0);
+    this->setUp();
+    this->workerThread->start();
+}
+
+void Timer::setUp()
+{
     this->workerThread = new QThread();
     this->timer = new TimerThread();
     this->timer->moveToThread(this->workerThread);
     this->running = false;
-    ui->label->setText(this->time.toString("mm:ss:z"));
-    connect(ui->pushButton, SIGNAL(released()), this, SLOT(startTimer()));
-    connect(this, SIGNAL(timerStart(bool)), this->timer, SLOT(startTiming(bool)));
-    connect(this, SIGNAL(timerStop()), this->timer, SLOT(stopTiming()));
-    connect(this->timer, SIGNAL(sigTimeout()), this, SLOT(update()));
+    this->finished = true;
+    ui->label->setText(STR_ZERO_TIME);
 
-    this->workerThread->start();
+    connect(ui->pushButton, &QPushButton::released, this, &Timer::startTimer);
+    connect(this, &Timer::timerStart, this->timer, &TimerThread::startTiming);
+    connect(this, &Timer::timerStop, this->timer, &TimerThread::stopTiming);
+    connect(this->timer, &TimerThread::sigTimeout, this, &Timer::update);
+
 }
 
 Timer::~Timer()
@@ -30,12 +36,12 @@ Timer::~Timer()
 void Timer::startTimer()
 {
     //first run or when a run is finished
-    if (this->time == QTime(0,0)) {
+    if (this->finished) {
         int minutes = ui->spinBox->value();
-        this->time.setHMS(0, minutes, 0);
-        emit timerStart(true);
+        emit timerStart(true, minutes);
         this->ui->pushButton->setText("Stop");
         this->running = true;
+        this->finished = false;
     } else {
         //countdown is running?
         if (this->running) {
@@ -43,26 +49,23 @@ void Timer::startTimer()
             this->ui->pushButton->setText("Resume");
             this->running = false;
         } else {
-            emit timerStart(false);
+            emit timerStart(false, 0);
             this->ui->pushButton->setText("Stop");
             this->running = true;
         }
     }
 }
 
-void Timer::update()
+void Timer::update(QString time)
 {
-    int rest = this->time.msecsSinceStartOfDay();
-    if (rest <= 0) {
-        //countdown is finished, stop the timer
+    this->ui->label->setText(time);
+
+    //end of time, stop timer, set button text
+    if (time.compare("") == 0) {
         emit timerStop();
         this->running = false;
-        //force time to be set to 0 so startTimer() can start again for sure.
-        this->time = QTime::fromMSecsSinceStartOfDay(0);
+        this->finished = true;
         this->ui->pushButton->setText("Start");
-        return;
+        this->ui->label->setText(STR_ZERO_TIME);
     }
-    rest -= INTERLEAVE; //100 milliseconds past
-    this->time = QTime::fromMSecsSinceStartOfDay(rest);
-    this->ui->label->setText(this->time.toString("mm:ss:z"));
 }

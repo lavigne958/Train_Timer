@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QThread>
 #include <QTime>
+#include <QElapsedTimer>
 
 #include "timerthread.h"
 
@@ -20,18 +21,20 @@ public:
     ~Timer();
 
 signals:
-    void timerStart(bool firstRun);
+    void timerStart(bool firstRun, int minutes);
     void timerStop();
 
 private:
     Ui::Timer *ui;
-    QTime time; //displaying the time
     TimerThread *timer;
     QThread *workerThread;
     bool running;
+    bool finished;
+
+    void setUp();
 
 private slots:
-    void update();
+    void update(QString);
     void startTimer();
 };
 

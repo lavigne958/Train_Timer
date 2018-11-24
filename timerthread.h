@@ -3,7 +3,9 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QTime>
 
+#define STR_ZERO_TIME "00:00:00"
 #define INTERLEAVE 100
 
 class TimerThread : public QObject
@@ -13,10 +15,10 @@ public:
     explicit TimerThread(QObject *parent = nullptr);
 
 signals:
-    void sigTimeout();
+    void sigTimeout(QString);
 
 public slots:
-    void startTiming(bool firstRun);
+    void startTiming(bool firstRun, int minutes);
     void stopTiming();
 
 private slots:
@@ -24,8 +26,7 @@ private slots:
 
 private:
     QTimer *timer;
-    int i;
-
+    QTime time;
 };
 
 #endif // TIMERTHREAD_H

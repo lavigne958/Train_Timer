@@ -1,21 +1,22 @@
 #include "timerthread.h"
 
 #include <QDebug>
+#include <QElapsedTimer>
 
 TimerThread::TimerThread(QObject *parent):
     QObject(parent)
 {
     this->timer = new QTimer(this);
+    this->timer->setTimerType(Qt::PreciseTimer);
 }
 
 void
-TimerThread::startTiming(bool firstRun)
+TimerThread::startTiming(bool firstRun, int minutes)
 {
     if (firstRun) {
-        qDebug() << "start timer";
         this->timer->setInterval(INTERLEAVE);
-        connect(this->timer, SIGNAL(timeout()), this, SLOT(timeout()));
-        this->i = 0;
+        connect(this->timer, &QTimer::timeout, this, &TimerThread::timeout);
+        this->time.setHMS(0, minutes, 0, 0); //explicitly set to 0
     }
 
     this->timer->start();
@@ -24,13 +25,15 @@ TimerThread::startTiming(bool firstRun)
 void
 TimerThread::stopTiming()
 {
-    qDebug() << "stop timing";
     this->timer->stop();
 }
 
 void
 TimerThread::timeout()
 {
-    qDebug() << "timer timed out" << i++;
-    emit sigTimeout();
+    int ms = this->time.msecsSinceStartOfDay();
+    ms -= INTERLEAVE;
+    this->time = QTime::fromMSecsSinceStartOfDay(ms);
+    QString toDisplay = this->time.toString("mm:ss:z");
+    emit sigTimeout(toDisplay);
 }
