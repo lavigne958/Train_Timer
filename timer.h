@@ -32,10 +32,12 @@ private:
     bool finished;
 
     void setUp();
+    void resetTimer();
 
 private slots:
     void update(QString);
     void startTimer();
+    void on_pushButton_2_clicked();
 };
 
 #endif // TIMER_H

@@ -62,10 +62,20 @@ void Timer::update(QString time)
 
     //end of time, stop timer, set button text
     if (time.compare("") == 0) {
-        emit timerStop();
-        this->running = false;
-        this->finished = true;
-        this->ui->pushButton->setText("Start");
-        this->ui->label->setText(STR_ZERO_TIME);
+       this->resetTimer();
     }
+}
+
+void Timer::resetTimer()
+{
+    emit timerStop();
+    this->running = false;
+    this->finished = true;
+    this->ui->pushButton->setText("Start");
+    this->ui->label->setText(STR_ZERO_TIME);
+}
+
+void Timer::on_pushButton_2_clicked()
+{
+    this->resetTimer();
 }
