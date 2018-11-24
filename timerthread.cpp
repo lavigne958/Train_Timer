@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QElapsedTimer>
+#include <QMetaMethod>
 
 TimerThread::TimerThread(QObject *parent):
     QObject(parent)
@@ -11,12 +12,17 @@ TimerThread::TimerThread(QObject *parent):
 }
 
 void
-TimerThread::startTiming(bool firstRun, int minutes)
+TimerThread::init()
 {
-    if (firstRun) {
-        this->timer->setInterval(INTERLEAVE);
-        connect(this->timer, &QTimer::timeout, this, &TimerThread::timeout);
-        this->time.setHMS(0, minutes, 0, 0); //explicitly set to 0
+    this->timer->setInterval(INTERLEAVE);
+    connect(this->timer, &QTimer::timeout, this, &TimerThread::timeout);
+}
+
+void
+TimerThread::startTiming(bool reset, int minutes)
+{
+    if (reset) {
+        this->time = QTime(0,minutes,0); //explicitly set to 0
     }
 
     this->timer->start();

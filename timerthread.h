@@ -13,6 +13,7 @@ class TimerThread : public QObject
     Q_OBJECT
 public:
     explicit TimerThread(QObject *parent = nullptr);
+    void init();
 
 signals:
     void sigTimeout(QString);

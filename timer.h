@@ -32,7 +32,7 @@ private:
     bool finished;
 
     void setUp();
-    void resetTimer();
+    void resetTimer(bool resetDisplay);
 
 private slots:
     void update(QString);

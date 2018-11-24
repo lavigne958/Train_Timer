@@ -26,6 +26,7 @@ void Timer::setUp()
     connect(this, &Timer::timerStop, this->timer, &TimerThread::stopTiming);
     connect(this->timer, &TimerThread::sigTimeout, this, &Timer::update);
 
+    this->timer->init();
 }
 
 Timer::~Timer()
@@ -63,23 +64,27 @@ void Timer::update(QString time)
 
     //end of time, stop timer, set button text
     if (time.compare("") == 0) {
-       this->resetTimer();
+       this->resetTimer(false);
     }
 }
 
-void Timer::resetTimer()
+void Timer::resetTimer(bool resetDisplay)
 {
     emit timerStop();
     this->running = false;
     this->finished = true;
     this->ui->pushButton->setText("Start");
-    this->ui->label->setText(STR_ZERO_TIME);
+    if (resetDisplay) {
+        this->on_spinBox_valueChanged(this->ui->spinBox->value());
+    } else {
+        this->ui->label->setText(STR_ZERO_TIME);
+    }
     this->ui->spinBox->setEnabled(true);
 }
 
 void Timer::on_pushButton_2_clicked()
 {
-    this->resetTimer();
+    this->resetTimer(true);
 }
 
 void Timer::on_spinBox_valueChanged(int minutes)
